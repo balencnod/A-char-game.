@@ -1,0 +1,75 @@
+package Project8;
+
+public class ThreadC extends Thread{
+	
+	Resource r;
+	int num1,num2;
+	double t1,t2;
+	int ap,bp;
+	
+	ThreadC(Resource _r){
+		r = _r;
+		num1 = 0;
+		num2 = 0;
+		ap = 0;
+		bp = 0;
+	}
+	
+	//打印随机字符
+	synchronized void printChar(int num) throws InterruptedException {
+		System.out.print((char)num + "\t"+"\t");
+	}
+	
+	public void run() { 
+		for(int i = 0;i < 3;i++) {
+			try {
+				synchronized(r) {
+					r.wait();
+					num1 = r.getNum1();
+					num2 = r.getNum2();
+					t1 = r.getT1();
+					t2 = r.getT2();
+					System.out.print(t1/1000+"\t");
+					printChar(num1);
+					if(num1 > num2) {
+						System.out.print("2"+"\t");
+						ap = ap + 2;
+					}
+					else if(num1 < num2) {
+						System.out.print("0"+"\t");
+					}
+					else {
+						System.out.print("1"+"\t");
+						ap++;
+					}
+					System.out.print(t2/1000+"\t");
+					printChar(num2);
+					if(num1 < num2) {
+						System.out.println("2"+"\t");
+						bp = bp + 2;
+					}
+					else if(num1 > num2) {
+						System.out.println("0"+"\t");
+					}
+					else {
+						System.out.println("1"+"\t");
+						bp++;
+					}
+					r.setB(false);
+					r.notifyAll();
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		if(ap>bp) {
+			System.out.println("A 获得胜利！");
+		}
+		else if(ap<bp) {
+			System.out.println("B 获得胜利！");
+		}
+		else {
+			System.out.println("平局！");
+		}
+	}
+}
